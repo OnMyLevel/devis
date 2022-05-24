@@ -290,6 +290,8 @@
 
 		.form-style-10 .section {
 			font: normal 20px 'Arial', sans-serif;
+			background-color: #000000;
+			text-align:center;
 			color: #FFF;
 			margin-bottom: 10px;
 		}
@@ -552,7 +554,7 @@
 						</div>
 					</div>
 				</div>
-				<br /s>
+				<br>
 				<form action="" method="POST">
 					<?php if($afficheFormulaireInfoPerso == 1) :?>
 
@@ -625,47 +627,7 @@
 							<div class="col-sm-12 col-xs-12 col-md-12">
 								<div class="form-style-10">
 
-									<div class="section"><span>1</span>Formule Active+ , très bon choix.</div>
-									<div class="inner-wrap">
-										<div class="row">
-											<div class="col-md-6">
-												<div class="divider" align="center"
-													style="padding-top:12px; padding-bottom:1px;"><label for="origin"><i
-															class="fas fa-map-marker-alt"></i> Lieu de chargement</label>
-												</div>
-												<input type="text" id="origin" required name="dep"
-													style="height:50px; margin-bottom:10px;"
-													placeholder="adresse, n° de voie,  Code postal, Commune"
-													class="form-control  rounded">
-											</div>
-											<br />
-											<div class="col-md-6">
-												<div class="divider" align="center"
-													style="padding-top:12px; padding-bottom:1px;"><label for="ari"><i
-															class="fas fa-map-marker-alt"></i> Lieu de déchargement</label>
-												</div>
-												<input type="text" id="ari" required name="ari" style="height:50px;"
-													placeholder="adresse, n° de voie,  Code postal, Commune"
-													class="form-control  rounded">
-											</div>
-										</div>
-									</div>
-									<div class="section"><span>2</span>quand voulez-vous déménager ?</div>
-									<div class="inner-wrap">
-										<div class="row">
-											<div class="col-md-6">
-												<input type="date" name="date" class="form-control">
-											</div>
-										</div>
-									</div>
-
-									<br>
-
-									<div class="button-section">
-										<input type="submit" style="width:100%; margin:0;" name="affichePrix"
-											value="Je calcule mon tarif !" class="btn btn-primary " />
-									</div>
-								</div>
+									<label> ERREUR DANS LE DEVIS <label/>
 							</div>
 						</div>
 					</div>
@@ -674,11 +636,11 @@
 
 					<div class="form-style-10">
 
-						<div class="section"><span>1</span>calcul de votre devis</div>
+						<div class="section">calcul de votre devis</div>
 						<div class="inner-wrap">
 							<div class="row">
 								<div class="col-md-6">
-									<label for="origin"><i class="fas fa-map-marker-alt"></i> Lieu de chargement</label>
+									<label for="origin"><i class="fas fa-map-marker-alt"></i> Lieu de départ</label>
 									<input type="text" id="origin" required name="dep"
 										style="height:50px; margin-bottom:10px;"
 										placeholder="adresse, n° de voie,  Code postal, Commune"
@@ -693,67 +655,27 @@
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-md-3">
-									<label for="volume"><i class="fas fa-cube"></i> Volume</label>
-									<input type="number" step=".01" id="volume" required name="volume"
-										style="height:50px; margin-bottom:10px;" class="form-control  rounded">
-								</div>
-
-								<div class="col-md-3">
-									<label>&nbsp;</label> <a href="calculVolume.php"><button type="button"
-											style="height:50px; margin-bottom:10px; width:100%; color:white; background-color: #F4B400 ;"
-											class="btn" value="Calculer mon volume">Calculer mon volume</button></a>
-								</div>
-								<div class="col-md-6">
-									<label for="type"><i class="fas fa-building"></i> Type </label>
+								<div class="col-md-8">
+									<label for="type"><i class="fas fa-building"></i>Options</label>
 									<label><select name="type" id="type" style="height:50px; margin-bottom:10px;"
 											class="form-control  rounded">
-											<option value="MaisonMaison">Maison/Maison</option>
-											<option value="MaisonAppart">Maison/appartement</option>
-											<option value="AppartMaison">Appartement/Maison</option>
-											<option value="AppartAppart">Appartement/Appartement</option>
+											<option value="MaisonMaison">Présentation</option>
+											<option value="MaisonAppart">lavage</option>
+											<option value="AppartMaison">garage</option>
 										</select>
 									</label>
 								</div>
 							</div>
-							<div class="row">
-								<div class="col-md-6">
-									<label><i class="fas fa-ellipsis-v"></i> Etages au départ</label>
-									<label><input type="number" required name="etagesDepart" min="0"
-											class="form-control  rounded"></label>
-								</div>
-
-								<br />
-								<div class="col-md-6">
-									<label for="ari"><i class="fas fa-ellipsis-v"></i> Etages à l'arrivée</label>
-									<label><input type="number" required name="etagesArrive" min="0"
-											class="form-control  rounded"></label>
-								</div>
-							</div>
-
-							<div class="row">
-								<div class="col-xs-6 col-md-6 col-sm-6">
-									<label>Ascenseur (départ) </label>
-									<label><select required name="ascenseurDepart" class="form-control  rounded">
-											<option value="non">Non</option>
-											<option value="oui">Oui</option>
-										</select></label>
-								</div>
-
-								<div class="col-xs-6 col-md-6 col-sm-6">
-									<label>Ascenseur (arrivée) </label>
-									<label><select required name="ascenseurArrive" class="form-control  rounded">
-											<option value="non">Non</option>
-											<option value="oui">Oui</option>
-										</select></label>
-								</div>
-							</div>
-						</div>
-						<div class="section"><span>2</span>quand voulez-vous déménager ?</div>
+						<div class="section">Quand voulez-vous le transport ?</div>
 						<div class="inner-wrap">
 							<div class="row">
 								<div class="col-md-6">
-									<label><input type="date" name="date" class="form-control"></label>
+								<label><i class="fas fa-ellipsis-v"></i> Date et Heure de  départ</label>
+									<label><input type="datetime-local" name="date" class="form-control"></label>
+								</div>
+								<div class="col-md-6">
+								<label><i class="fas fa-ellipsis-v"></i> Date et Heure d'arrivé</label>
+									<label><input type="datetime-local" name="date" class="form-control"></label>
 								</div>
 							</div>
 							<div class="button-section">
