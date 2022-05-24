@@ -14,6 +14,7 @@ if(isset($_POST['valider']) && $_POST['formule'] == "Active"){
 $_SESSION['formuleChoisie'] = $_POST['formule'] ;
 $_SESSION['nom'] = $_POST['nom'];
 $_SESSION['prenom'] = $_POST['prenom'];
+$_SESSION['entreprise'] = $_POST['entreprise'];
 $_SESSION['tel'] = $_POST['tel'];
 $_SESSION['mail'] = $_POST['mail'];
 //affichage du formulaire pour formule Active
@@ -93,9 +94,6 @@ $ari = $_POST['ari'];
 $prix = $ladistance*$prixKM + $prixService + $prixVehicule ;
 $phraseDistance = "la distance entre " .$dep. " et ".$ari." est de ".calculer_distance($dep,$ari)."KM" ;
 }
-
-
-
 
 
 //sinon, si l'utilisateur choisi une autre formule...
@@ -285,7 +283,7 @@ body{
 .form-style-10 label{
 	display: block;
 	font: 16px Arial, sans-serif;
-	color: #Ff6666;
+	color: #DB4437;
 	margin-bottom: 15px;
 }
 .form-style-10 input[type="text"],
@@ -316,11 +314,11 @@ body{
 
 .form-style-10 .section{
 	font: normal 20px 'Arial', sans-serif;
-	color: #Ff6666 ;
+	color: #FFF ;
 	margin-bottom: 10px;
 }
 .form-style-10 .section span {
-	background-color: #Ff6666;
+	background-color: #DB4437;
 	padding: 5px 10px 5px 10px;
 	position: absolute;
 	border-radius: 50%;
@@ -334,7 +332,7 @@ body{
 }
 .form-style-10 input[type="button"], 
 .form-style-10 input[type="submit"]{
-	background-color: #Ff6666;
+	background-color: #DB4437;
 	padding: 8px 20px 8px 20px;
 	border-radius: 5px;
 	-webkit-border-radius: 5px;
@@ -350,7 +348,7 @@ body{
 }
 .form-style-10 input[type="button"]:hover, 
 .form-style-10 input[type="submit"]:hover{
-	background-color:#00CC99;
+	background-color:#F4B400;
 	-moz-box-shadow: inset 0px 2px 2px 0px rgba(255, 255, 255, 0.28);
 	-webkit-box-shadow: inset 0px 2px 2px 0px rgba(255, 255, 255, 0.28);
 	box-shadow: inset 0px 2px 2px 0px rgba(255, 255, 255, 0.28);
@@ -372,7 +370,7 @@ body{
 #etape1{
 	font: normal 20px 'Arial', sans-serif;
 	color:white;
-	background-color:<?php if($afficheFormulaireInfoPerso == 1) {echo "#Ff6666";}else{echo "#00CC99";}; ?> ;
+	background-color:<?php if($afficheFormulaireInfoPerso == 1) {echo "#DB4437";}else{echo "#F4B400";}; ?> ;
 	padding: 20px;
 	border-radius: 6px;
 }
@@ -385,7 +383,7 @@ display:none;
 	}";}?>
 .rond1{
 	font: normal 20px 'Arial', sans-serif;
-	background-color: #Ff6666;
+	background-color: #DB4437;
 	padding: 5px 10px 5px 10px;
 	position: absolute;
 	border-radius: 50%;
@@ -402,16 +400,15 @@ display:none;
 #etape2{
 	font: normal 20px 'Arial', sans-serif;
 	color:white;
-	background-color: <?php if($afficheFormulaireFormules1 == 1 OR $afficheFormulaireFormules2345==1) {echo "#Ff6666";}else{echo "#00CC99";}; ?>;
+	background-color: <?php if($afficheFormulaireFormules1 == 1 OR $afficheFormulaireFormules2345==1) {echo "#DB4437";}else{echo "#F4B400";}; ?>;
 	padding: 20px;
 border-radius: 6px;
 }
 
 .divider{
-	background:#BEBEBE;
+	background:#212529;
 	margin-top:12px;
 	margin-bottom:20px;
-	
 }
 
 <?php
@@ -428,7 +425,7 @@ display:none;
 	?>
 .rond2{
 font: normal 20px 'Arial', sans-serif;
-	background-color: #Ff6666;
+	background-color: #DB4437;
 	padding: 5px 10px 5px 10px;
 	position: absolute;
 	border-radius: 50%;
@@ -443,7 +440,7 @@ font: normal 20px 'Arial', sans-serif;
 #etape3{
 	font: normal 20px 'Arial', sans-serif;
 	color:white;
-	background-color: <?php if($affichePrix == 1) {echo "#Ff6666";}else{echo "#00CC99";}; ?>;
+	background-color: <?php if($affichePrix == 1) {echo "#DB4437";}else{echo "#F4B400";}; ?>;
 	padding: 20px;
 	border-radius: 6px;
 }
@@ -455,7 +452,7 @@ display:none;
 	}";}?>
 .rond3{
 	font: normal 20px 'Arial', sans-serif;
-	background-color: #Ff6666;
+	background-color: #DB4437;
 	padding: 5px 10px 5px 10px;
 	position: absolute;
 	border-radius: 50%;
@@ -634,7 +631,7 @@ display:none;
  </div>
  
  <div class="col-md-3">
- 	<label>&nbsp;</label> <a href="calculVolume.php"><button type="button" style="height:50px; margin-bottom:10px; width:100%; color:white; background-color: #00cc99 ;" class="btn" value="Calculer mon volume">Calculer mon volume</button></a>
+ 	<label>&nbsp;</label> <a href="calculVolume.php"><button type="button" style="height:50px; margin-bottom:10px; width:100%; color:white; background-color: #F4B400 ;" class="btn" value="Calculer mon volume">Calculer mon volume</button></a>
  </div>
 <div class="col-md-6">
 	<label for="type"><i class="fas fa-building"></i> Type </label>
@@ -688,11 +685,11 @@ display:none;
 <div class="button-section">
 	<div class="row">
 		<div class="col-md-6 col-xs-12 col-sm-6">
-			<label><input style="width:100%; background-color: #Ff6666;" type="submit"  href="devis.php" name="retour" value="Retour" class="btn btn-danger"/></label>
+			<label><input style="width:100%; background-color: #DB4437;" type="submit"  href="devis.php" name="retour" value="Retour" class="btn btn-danger"/></label>
      </div>
      <br/>
     <div class="col-md-6 col-xs-12 col-sm-6">
-    	<label><input type="submit" style="width:100%; background-color: #00CC99;" name="affichePrix" value="Je calcule mon tarif !"  class="btn btn-lg btn-primary "/>
+    	<label><input type="submit" style="width:100%; background-color: #F4B400;" name="affichePrix" value="Je calcule mon tarif !"  class="btn btn-lg btn-primary "/>
     </label>
 
 	</div>
@@ -763,7 +760,7 @@ echo '  <br><div class="row">
 				$mail_Data .= "</head> \n";
 				$mail_Data .= "<body> \n";
 				$mail_Data .= "<br>";
-				$mail_Data .= "<label><b>Formule choisie : ACTIVE <span style=\"color:#Ff6666;\">*</span></b></label> ";
+				$mail_Data .= "<label><b>Formule choisie : ACTIVE <span style=\"color:#DB4437;\">*</span></b></label> ";
 		
 				$mail_Data .= "<br>";
 				$mail_Data .= "Date prévue : ";
@@ -902,7 +899,7 @@ echo '  <br>
 				$mail_Data .= "</head> \n";
 				$mail_Data .= "<body> \n";
 				$mail_Data .= "<br>";
-				$mail_Data .= "<label><b>Formule choisie : ".$_SESSION['formuleChoisie']." <span style=\"color:#Ff6666;\">*</span></b></label> ";
+				$mail_Data .= "<label><b>Formule choisie : ".$_SESSION['formuleChoisie']." <span style=\"color:#DB4437;\">*</span></b></label> ";
 				$mail_Data .= "<br>";
 				$mail_Data .= "Date prévue : ";
 				$mail_Data .= $_SESSION['date'];
