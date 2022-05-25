@@ -76,33 +76,14 @@
 		echo "<script>console.log('Console: " . $console . "' );</script>";
 	}
 
-	if(isset($_POST['valider']) && $_POST['formule'] == "Active"){
-		$_SESSION['formuleChoisie'] = $_POST['formule'] ;
-		$_SESSION['nom'] = $_POST['nom'];
-		$_SESSION['prenom'] = $_POST['prenom'];
-		$_SESSION['entreprise'] = $_POST['entreprise'];
-		$_SESSION['tel'] = $_POST['tel'];
-		$_SESSION['mail'] = $_POST['mail'];
-         
-		// affichage de variable :
-		write_to_console($_SESSION['formuleChoisie']);
-		write_to_console($_SESSION['nom']);
-		write_to_console($_SESSION['prenom']);
-		write_to_console($_SESSION['entreprise']);
-		write_to_console($_SESSION['tel']);
-		write_to_console($_SESSION['mail']);
-
-		//affichage du formulaire pour formule Active //
-		@$afficheFormulaireInfoPerso = 0;
-		@$afficheFormulaireFormules1 = 1;
-	}
-
 	if(isset($_POST['valider']) && $_POST['formule'] != "Active"){
+
 		$_SESSION['formuleChoisie'] = $_POST['formule'] ;
 		$_SESSION['nom'] = $_POST['nom'];
 		$_SESSION['prenom'] = $_POST['prenom'];
 		$_SESSION['tel'] = $_POST['tel'];
 		$_SESSION['mail'] = $_POST['mail'];
+		$_SESSION['entreprise'] = $_POST['entreprise'];
 
 		// affichage de variable :
 		write_to_console($_SESSION['formuleChoisie']);
@@ -124,6 +105,9 @@
 			$_SESSION['ari']=$_POST['ari'];
 			$_SESSION['dateD'] = $_POST['dateDepart'];
 			$_SESSION['dateA'] = $_POST['dateArriver'];
+			$_SESSION['options'] = $_POST['dateArriver'];
+			$_SESSION['lavage'] = $_POST['lavage'];
+			$_SESSION['presentation'] = $_POST['presentation'];
 			
 			// affichage de variable :
 			write_to_console($_SESSION['dep']);
@@ -720,14 +704,17 @@
 									</div>
 								</div>
 								<div class="row">
-									<div class="col-md-8">
-										<label for="type"><i class="fas fa-building"></i>Options</label>
-										<label><select name="type" id="type" style="height:50px; margin-bottom:10px;"
-												class="form-control  rounded">
-												<option value="MaisonMaison">Présentation</option>
-												<option value="MaisonAppart">Lavage</option>
-											</select>
+									<div class="col-md-6">
+										<label for="type">
+											<i class="fas fa-building"></i>
 										</label>
+										<input type="checkbox" name="presentation" value="presentation">Présentation
+									</div>
+									<div class="col-md-6">
+										<label for="type">
+											<i class="fas fa-building"></i>
+										</label>
+										<input type="checkbox" name="lavage" value="lavage">Lavage
 									</div>
 								</div>
 							<div class="section">Plannification du convoyage</div>
