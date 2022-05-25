@@ -1,13 +1,67 @@
 <?php
-	// ------------DEVIS------------//
+	
+	// ------------ DEVIS ------------ //
+	
+	// require_once('bdd.php'); //
 
-	//require_once('bdd.php');//
 	session_start();
-
 	$afficheFormulaireInfoPerso = 1 ;
 	@$afficheFormulaireFormules1 = 0 ;
 	@$afficheFormulaireFormules2345 = 0 ;
 	@$affichePrix = 0;
+ 
+    // ------------ TARIFS ------------//
+	$tarifs = array(
+		// tarifs basique   
+		"basique" => array(
+			"50km" => 90, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
+			"supKm" => 0.60, // Tarif du Kilomètre Suppélementaire (HT)
+			"temps" => 300, //  Durée du trajet (en minutes)
+			"tarif" => 210,
+		),
+		// tarifs 9m3
+		"9m3" => array(
+			"50km" => 95, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
+			"supKm" => 0.65, // Tarif du Kilomètre Suppélementaire (HT)
+			"temps" => 300, //  Durée du trajet (en minutes)
+			"tarif" => 251,
+		),
+		// tarifs 12m3
+		"12M3" => array(
+			"50km" => 100, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
+			"supKm" => 0.70, // Tarif du Kilomètre Suppélementaire (HT)
+			"temps" => 300, //  Durée du trajet (en minutes)
+			"tarif" => 268,
+		),
+		// tarifs 15m3
+		"15m3" => array(
+			"50km" => 105, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
+			"supKm" => 0.75, // Tarif du Kilomètre Suppélementaire (HT)
+			"temps" => 300, //  Durée du trajet (en minutes)
+			"tarif" => 285,
+		),
+		// tarifs 20m3
+		"20m3" => array(
+			"50km" => 105, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
+			"supKm" => 0.80, // Tarif du Kilomètre Suppélementaire (HT)
+			"temps" => 300, //  Durée du trajet (en minutes)
+			"tarif" => 302,
+		),
+		// tarifs 25m3
+		"25m3" => array(
+			"50km" => 115, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
+			"supKm" => 0.85, // Tarif du Kilomètre Suppélementaire (HT)
+			"temps" => 300, //  Durée du trajet (en minutes)
+			"tarif" => 319,
+		),
+		// tarifs 30m3
+		"30m3" => array(
+			"50km" => 120, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
+			"supKm" => 0.90, // Tarif du Kilomètre Suppélementaire (HT)
+			"temps" => 300, //  Durée du trajet (en minutes)
+			"tarif" => 336,
+		)
+	);
 
 	if(isset($_POST['valider']) && $_POST['formule'] == "Active"){
 		$_SESSION['formuleChoisie'] = $_POST['formule'] ;
@@ -16,33 +70,17 @@
 		$_SESSION['entreprise'] = $_POST['entreprise'];
 		$_SESSION['tel'] = $_POST['tel'];
 		$_SESSION['mail'] = $_POST['mail'];
-
 		//affichage du formulaire pour formule Active //
 		@$afficheFormulaireInfoPerso = 0;
 		@$afficheFormulaireFormules1 = 1;
 	}
 
-
-	if(isset($_POST['valider']) && $_POST['formule'] != "Active"){
-
-		$_SESSION['formuleChoisie'] = $_POST['formule'] ;
-		$_SESSION['nom'] = $_POST['nom'];
-		$_SESSION['prenom'] = $_POST['prenom'];
-		$_SESSION['entreprise'] = $_POST['entreprise'];
-		$_SESSION['tel'] = $_POST['tel'];
-		$_SESSION['mail'] = $_POST['mail'];
-		
-		//affichage du formulaire pour les autres formules
-		@$afficheFormulaireInfoPerso = 0;
-		@$afficheFormulaireFormules2345 = 1;
-	}
-
-
 	if(isset($_POST['affichePrix'])){
 
 			$_SESSION['dep']=$_POST['dep'];
 			$_SESSION['ari']=$_POST['ari'];
-			$_SESSION['date'] = $_POST['date'];
+			$_SESSION['date'] = $_POST['dateDepart'];
+			$_SESSION['date'] = $_POST['dateArriver'];
 			$affichePrix = 1;
 
 		if($_SESSION['formuleChoisie'] == "Active"){
@@ -203,9 +241,7 @@
 			}
 
 			//----------------FIN DES FIXAGE ET CALCUL DES PRIX--------------------\\
-
 			//calcul du prix total ( autres formules )
-
 			$prix = ($prixKM * $ladistance) + $prixVolume + ($prixEtage * $etagesDepart) + ($prixEtage * $etagesArrive) + @$prixType + $ascenseurDepart + $ascenseurArrive + $prixService;
 			$phraseDistance = "la distance entre " .$dep. " et ".$ari." est de ".calculer_distance($dep,$ari)."KM" ;
 			$_SESSION['date'] = $_POST['date'];
@@ -225,7 +261,7 @@
 			width: 100%;
 			max-width: 100%;
 			padding: 30px;
-
+            margin-top: 10%;
 			background: #FFF;
 			border-radius: 10px;
 			-webkit-border-radius: 10px;
@@ -346,37 +382,34 @@
 
 		.list-group {
 			border: none !important;
-
 		}
 
 		#etape1 {
 			font: normal 20px 'Arial', sans-serif;
 			color: white;
-
-			background-color:<?php if($afficheFormulaireInfoPerso==1) {
-				echo "#DB4437";
-			}
-
-			else {
-				echo "#F4B400";
-			}
-
-			;
-			?>;
+			background-color:
+							<?php 
+								if($afficheFormulaireInfoPerso==1) {
+									echo "#DB4437";
+								}
+								else {
+									echo "#F4B400";
+								};
+		    				?>;
 			padding: 20px;
 			border-radius: 6px;
 		}
 
-
 		<?php if($afficheFormulaireInfoPerso !=1) {
-			echo"@media screen and (max-width: 992px){
-	#etape1 {
-				display: none;
-			}
-		}
+			echo "@media screen and (max-width: 992px){
+					#etape1 {
+						display: none;
+					}
+				}
+			";}
+		?>
 
-		";}?>
-	.rond1 {
+		.rond1 {
 			font: normal 20px 'Arial', sans-serif;
 			background-color: #DB4437;
 			padding: 5px 10px 5px 10px;
@@ -389,50 +422,44 @@
 			margin-left: -45px;
 			color: #fff;
 			margin-top: -3px;
-
 		}
 
 		#etape2 {
 			font: normal 20px 'Arial', sans-serif;
 			color: white;
-
-			background-color: <?php if($afficheFormulaireFormules1==1 OR $afficheFormulaireFormules2345==1) {
-				echo "#DB4437";
-			}
-
-			else {
-				echo "#F4B400";
-			}
-
-			;
-			?>;
+			background-color:
+							<?php 
+								if($afficheFormulaireFormules1==1 OR $afficheFormulaireFormules2345==1) {
+									echo "#DB4437";
+								} else {
+									echo "#F4B400";
+								};
+							?>;
 			padding: 20px;
 			border-radius: 6px;
 		}
-
 		.divider {
 			background: #212529;
 			margin-top: 12px;
 			margin-bottom: 20px;
 		}
-
-		<?php if($afficheFormulaireFormules1==1 OR $afficheFormulaireFormules2345==1) {
-			echo "@media screen and (max-width: 992px){
-	#etape2 {
-				display: block;
+		<?php 
+			if($afficheFormulaireFormules1==1 OR $afficheFormulaireFormules2345==1) {
+				echo "@media screen and (max-width: 992px){
+						#etape2 {
+							display: block;
+						}
+					}
+				";
+			} else {
+				echo "@media screen and (max-width: 992px) {
+						#etape2 {
+							display: none;
+					}
+				}";		
 			}
-		}
-
-		";}else{echo "@media screen and (max-width: 992px) {
-			#etape2 {
-				display: none;
-			}
-		}
-
-		";}
-
-
-		?>.rond2 {
+		?>
+		.rond2 {
 			font: normal 20px 'Arial', sans-serif;
 			background-color: #DB4437;
 			padding: 5px 10px 5px 10px;
@@ -450,30 +477,29 @@
 		#etape3 {
 			font: normal 20px 'Arial', sans-serif;
 			color: white;
-
-			background-color: <?php if($affichePrix==1) {
-				echo "#DB4437";
-			}
-
-			else {
-				echo "#F4B400";
-			}
-
-			;
-			?>;
+			background-color:
+							<?php 
+								if($affichePrix==1) {
+									echo "#DB4437";
+								} else {
+									echo "#F4B400";
+								};
+							?>;
 			padding: 20px;
 			border-radius: 6px;
 		}
 
 		<?php if($affichePrix !=1) {
-			echo "@media screen and (max-width: 992px){
-	#etape3 {
-				display: none;
+				echo "@media screen and (max-width: 992px){
+						#etape3 {
+							display: none;
+						}
+					}
+				";
 			}
-		}
+		?>
 
-		";}?>
-	.rond3 {
+		.rond3 {
 			font: normal 20px 'Arial', sans-serif;
 			background-color: #DB4437;
 			padding: 5px 10px 5px 10px;
@@ -493,13 +519,11 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 		<meta name="description" content="" />
 		<meta name="author" content="" />
-		<title> Devis en ligne - Trans IMJ</title>
+		<title> Devis en ligne - Incygne</title>
 		<!--<link rel="icon" type="image/x-icon" href="assets/img/favicon.ico" /> -->
 		<!-- Font Awesome icons (free version)-->
-
 		<!-- Core theme CSS (includes Bootstrap)-->
 		<link href="css/style.css" rel="stylesheet" />
-
 		<!-- autocompletion adresseArrives -->
 		<script type="text/javascript"
 			src="https://maps.google.com/maps/api/js?libraries=places&language=fr&key=AIzaSyD_Ygw4nw_-Nwyv9JEtnmt8T6rpaGwFRIE">
@@ -529,12 +553,10 @@
 		}, false);
 		</script>
 	</head>
-
 	<body>
 		<!-- Navigation-->
 		<section class="page-section" id="devis">
 			<div class="container">
-
 				<div id="chrono" style="width:100%; height:20%;">
 					<div class="row">
 						<div class="col-md-12 col-lg-4">
@@ -607,13 +629,17 @@
 						</div>
 						<div class="divider section" align="center">Choix de segment</div>
 						<div class="inner-wrap">
-							<label><select name="formule" required class="form-control rounded">
-									<option value="Active">Berline</option>
-									<option value="Simple">Sitadine</option>
-									<option value="Eco">Sportive</option>
-									<option value="Zen">SUV</option>
-									<option value="Luxe">Monospace</option>
-								</select></label>
+							<label>
+								<select name="formule" required class="form-control rounded">
+									<option value="basique">Citadine, Berline, Sportive, SUV, Monospace, 3m3, 6m3</option>
+									<option value="9m3">9m3</option>
+									<option value="12m2">12m3</option>
+									<option value="15m2">15m3</option>
+									<option value="20m3">20m3</option>
+									<option value="25m3">25m3</option>
+									<option value="30m3">30m3</option>
+								</select>
+							</label>
 						</div>
 						<div class="button-section">
 							<input type="submit" style="width:100%; margin:0;" name="valider" value="Continuer"
@@ -648,7 +674,7 @@
 								</div>
 								<br />
 								<div class="col-md-6">
-									<label for="ari"><i class="fas fa-map-marker-alt"></i> Lieu de déchargement</label>
+									<label for="ari"><i class="fas fa-map-marker-alt"></i> Lieu d'arrivée</label>
 									<input type="text" id="ari" required name="ari" style="height:50px;"
 										placeholder="adresse, n° de voie,  Code postal, Commune"
 										class="form-control  rounded">
@@ -660,25 +686,25 @@
 									<label><select name="type" id="type" style="height:50px; margin-bottom:10px;"
 											class="form-control  rounded">
 											<option value="MaisonMaison">Présentation</option>
-											<option value="MaisonAppart">lavage</option>
-											<option value="AppartMaison">garage</option>
+											<option value="MaisonAppart">Lavage</option>
 										</select>
 									</label>
 								</div>
 							</div>
-						<div class="section">Quand voulez-vous le transport ?</div>
+						<div class="section">Plannification du convoyage</div>
 						<div class="inner-wrap">
 							<div class="row">
 								<div class="col-md-6">
-								<label><i class="fas fa-ellipsis-v"></i> Date et Heure de  départ</label>
-									<label><input type="datetime-local" name="date" class="form-control"></label>
+								<label><i class="fas fa-ellipsis-v"></i> Date et Heure de départ</label>
+									<label><input type="datetime-local" name="dateDepart" class="form-control"></label>
 								</div>
 								<div class="col-md-6">
-								<label><i class="fas fa-ellipsis-v"></i> Date et Heure d'arrivé</label>
-									<label><input type="datetime-local" name="date" class="form-control"></label>
+								<label><i class="fas fa-ellipsis-v"></i> Date et Heure d'arrivée</label>
+									<label><input type="datetime-local" name="dateArriver" class="form-control"></label>
 								</div>
 							</div>
-							<div class="button-section">
+						</div>
+						<div class="button-section">
 								<div class="row">
 									<div class="col-md-6 col-xs-12 col-sm-6">
 										<label><input style="width:100%; background-color: #DB4437;" type="submit"
@@ -695,7 +721,6 @@
 									</div>
 								</div>
 							</div>
-						</div>
 					</div>
 					<?php endif; ?>
 					<?php 
@@ -741,7 +766,7 @@
 		</ul></div></div>
 		<div align="center"><a href="https://trans-imj.com/devis.php"><button type="button" value="Retour" class="btn btn-danger">Retour</button></a>
 	</div>' ;
-					$to 		= "contact@trans-imj.com";
+					$to 		= "merilb78@gmail.com";
 					
 					$from		= "DEVIS@transIMJ.com ";
 					ini_set("SMTP","smtp.gmail.com");
@@ -801,157 +826,6 @@
 					// 
 					$CR_Mail = @mail ($to,utf8_decode($subject), utf8_decode($mail_Data), $headers);
 
-	}
-	if(isset($_POST['affichePrix'])&&$_SESSION['formuleChoisie']!="Active"){
-		$affichePrix = 1;
-	echo '  <br>
-	<div class="row">
-		<div class="col-md-6 offset-3 order-md-2 mb-4">
-		<H3>
-			<span class="text-muted">RECAPITULATIF</span>
-		</h3>
-			
-			<span class="text-muted">'.$phraseDistance.'</span>
-		</div>
-		<div class="col-md-6 offset-3 order-md-2 mb-4">
-		<ul class="list-group mb-3">
-			<li class="d-flex justify-content-between lh-condensed">
-			<div>
-				<h6 class="my-0">Adresse de départ : </h6>
-				
-			</div>
-			<span class="text-muted">'.$_SESSION["dep"].'</span>
-			</li>
-			<li class="d-flex justify-content-between lh-condensed">
-			<div>
-				<h6 class="my-0">adresse d\'arrivée : </h6>
-				
-			</div>
-			<span class="text-muted">'.$_SESSION["ari"].'</span>
-			</li>
-			<li class="d-flex justify-content-between lh-condensed">
-			<div>
-				<h6 class="my-0">Volume à déménager : </h6>
-				
-			</div>
-			<span class="text-muted">'.$_SESSION["volume"].' m3</span>
-			</li>
-			<li class="d-flex justify-content-between lh-condensed">
-			<div>
-				<h6 class="my-0">Type de déménagement : </h6>
-				
-			</div>
-			<span class="text-muted">'.$_SESSION["type"].'</span>
-			</li>
-			<li class="d-flex justify-content-between lh-condensed">
-			<div>
-				<h6 class="my-0">Ascenseur au départ : </h6>
-				
-			</div>
-			<span class="text-muted">'.$_SESSION["ascenseurDepart"].'</span>
-			</li>
-			<li class="d-flex justify-content-between lh-condensed">
-			<div>
-				<h6 class="my-0">Ascenseur à l\'arrivée : </h6>
-				
-			</div>
-			<span class="text-muted">'.$_SESSION["ascenseurArrive"].'</span>
-			</li>
-			<li class="d-flex justify-content-between lh-condensed">
-			<div>
-				<h6 class="my-0">Nombre d\'étages au départ: </h6>
-				
-			</div>
-			<span class="text-muted">'.$_SESSION["etagesDep"].' étages.</span>
-			</li>
-			<li class="d-flex justify-content-between lh-condensed">
-			<div>
-				<h6 class="my-0">Nombre d\'étages à l\'arrivée : </h6>
-				
-			</div>
-			<span class="text-muted">'.$_SESSION["etagesAri"].' étages.</span>
-			</li>
-			<li class="d-flex justify-content-between">
-			<span>Total</span>
-			<strong style="font-size:20px;">'.$prix.'€</strong>
-			</li>
-		</ul></div></div>
-		<div align="right">
-		<div align="center"><a href="https://trans-imj.com/devis.php"><button type="button" value="Retour" class="btn btn-danger">Retour</button></a></div>
-	</div>
-	' ;
-					$to 		= "contact@trans-imj.com";
-	
-					$from		= "DEVIS@transIMJ.com ";
-					ini_set("SMTP","smtp.gmail.com");
-
-
-					$subject 	= "Trans-IMJ.com - Devis de ".$_SESSION['nom'] ;
-
-					$mail_Data = "";
-					$mail_Data .= '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-	<html xmlns:v="urn:schemas-microsoft-com:vml">';
-					$mail_Data .= "<head> \n";
-					$mail_Data .= '<meta http-equiv="content-type" content="text/html; charset=utf-8">';
-					$mail_Data .= '<meta name="viewport" content="width=device-width; initial scale=1.0; maximum-scale=1.0;">';
-					$mail_Data .= "<title> Atd1.fr </title> \n";
-					$mail_Data .= "</head> \n";
-					$mail_Data .= "<body> \n";
-					$mail_Data .= "<br>";
-					$mail_Data .= "<label><b>Formule choisie : ".$_SESSION['formuleChoisie']." <span style=\"color:#DB4437;\">*</span></b></label> ";
-					$mail_Data .= "<br>";
-					$mail_Data .= "Date prévue : ";
-					$mail_Data .= $_SESSION['date'];
-					$mail_Data .= "<br>";
-					$mail_Data .= "adresse de départ : ";
-					$mail_Data .= $_SESSION['dep'];
-					$mail_Data .= '<br>';
-					$mail_Data .="<label><b>adresse Arrivée : </label> ";
-					$mail_Data .= $_SESSION['ari'];
-					$mail_Data .= "<br>";
-					$mail_Data .= "volume à transporter : ";
-					$mail_Data .= $_SESSION['volume'] . "m3";
-					$mail_Data .= "<br/>";
-					$mail_Data .= "Nombre étages au départ : ";
-					$mail_Data .= $_SESSION['etagesDep'];
-					$mail_Data .= "<br/>";
-					$mail_Data .= "Nombre étages arrivée ";
-					$mail_Data .= $_SESSION['etagesAri'] ;
-					$mail_Data .= "<br/>";
-					$mail_Data .= "Ascenseur au depart : ";
-					$mail_Data .= $_SESSION['ascenseurDepart'] ;
-					$mail_Data .= "<br/>";
-					$mail_Data .= "ascenseur à l'arrivee : ";
-					$mail_Data .= $_SESSION['ascenseurArrive'];
-					$mail_Data .= "<br/><br/><br/><br/>";
-					$mail_Data .= " informations Client : ";
-					$mail_Data .= $_SESSION['nom'] ." | ".$_SESSION['prenom'];
-					$mail_Data .= "<br />";
-					$mail_Data .= $_SESSION['tel'];
-					$mail_Data .= "<br>";
-					$mail_Data .= $_SESSION['mail'];
-					$mail_Data .= "<br>" ;				
-					$mail_Data .= "total : ";
-					$mail_Data .= $prix;
-					$mail_Data .="<p> Email envoyé automatiquement depuis le site trans-imj.com </p>";				
-					$mail_Data .= "<br> \n";
-					$mail_Data .= "</body> \n";
-					$mail_Data .= "</HTML> \n";
-
-					$headers  = "MIME-Version: 1.0\r\n";
-					$headers .= "Content-type: text/html; charset=iso-8859-1 \n";
-					$headers .= 'Content-Transfer-Encoding: 8bit'."\r\n";
-					$headers .= "From: $from  \n";
-					$headers .= "Disposition-Notification-To: $from  \n";
-
-					// Message de Priorité haute
-					$headers .= "X-Priority: 1  \n";
-					$headers .= "X-MSMail-Priority: High \n";
-					$CR_Mail = TRUE;
-
-					// 
-					$CR_Mail = @mail ($to,utf8_decode($subject), utf8_decode($mail_Data), $headers);
 	}
 	?>
 					<!--<input style="float: right;"type="submit" name="soumettre" value="Soumettre le devis" class="btn btn-success"/>-->
