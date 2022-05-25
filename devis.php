@@ -63,6 +63,19 @@
 		)
 	);
 
+	function write_object_to_console($data) {
+		$console = 'console.log(' . json_encode($data) . ');';
+		$console = sprintf('<script>%s</script>', $console);
+		echo $console;
+	}
+
+	function write_to_console($data) {
+		$console = $data;
+		if (is_array($console))
+			$console = implode(',', $console);   
+		echo "<script>console.log('Console: " . $console . "' );</script>";
+	}
+
 	if(isset($_POST['valider']) && $_POST['formule'] == "Active"){
 		$_SESSION['formuleChoisie'] = $_POST['formule'] ;
 		$_SESSION['nom'] = $_POST['nom'];
@@ -70,17 +83,53 @@
 		$_SESSION['entreprise'] = $_POST['entreprise'];
 		$_SESSION['tel'] = $_POST['tel'];
 		$_SESSION['mail'] = $_POST['mail'];
+         
+		// affichage de variable :
+		write_to_console($_SESSION['formuleChoisie']);
+		write_to_console($_SESSION['nom']);
+		write_to_console($_SESSION['prenom']);
+		write_to_console($_SESSION['entreprise']);
+		write_to_console($_SESSION['tel']);
+		write_to_console($_SESSION['mail']);
+
 		//affichage du formulaire pour formule Active //
 		@$afficheFormulaireInfoPerso = 0;
 		@$afficheFormulaireFormules1 = 1;
 	}
 
+	if(isset($_POST['valider']) && $_POST['formule'] != "Active"){
+		$_SESSION['formuleChoisie'] = $_POST['formule'] ;
+		$_SESSION['nom'] = $_POST['nom'];
+		$_SESSION['prenom'] = $_POST['prenom'];
+		$_SESSION['tel'] = $_POST['tel'];
+		$_SESSION['mail'] = $_POST['mail'];
+
+		// affichage de variable :
+		write_to_console($_SESSION['formuleChoisie']);
+		write_to_console($_SESSION['nom']);
+		write_to_console($_SESSION['prenom']);
+		write_to_console($_SESSION['entreprise']);
+		write_to_console($_SESSION['tel']);
+		write_to_console($_SESSION['mail']);
+
+		//affichage du formulaire pour les autres formules
+		@$afficheFormulaireInfoPerso = 0;
+		@$afficheFormulaireFormules2345 = 1;
+	}
+		
+
 	if(isset($_POST['affichePrix'])){
 
 			$_SESSION['dep']=$_POST['dep'];
 			$_SESSION['ari']=$_POST['ari'];
-			$_SESSION['date'] = $_POST['dateDepart'];
-			$_SESSION['date'] = $_POST['dateArriver'];
+			$_SESSION['dateD'] = $_POST['dateDepart'];
+			$_SESSION['dateA'] = $_POST['dateArriver'];
+			
+			// affichage de variable :
+			write_to_console($_SESSION['dep']);
+			write_to_console($_SESSION['ari']);
+			write_to_console($_SESSION['dateD'] );
+			write_to_console($_SESSION['dateA']);
 			$affichePrix = 1;
 
 		if($_SESSION['formuleChoisie'] == "Active"){
@@ -563,18 +612,15 @@
 					<div class="row">
 						<div class="col-md-12 col-lg-4">
 							<div id="etape1">
-								<div class="rond1">1 </div>Coordonnés et formule
-							</div>
+								<div class="rond1">1 </div>Coordonnés et formule</div>
 						</div>
 						<div class="col-md-12 col-lg-4">
 							<div id="etape2">
-								<div class="rond2">2 </div>vous y êtes presque
-							</div>
+								<div class="rond2">2 </div>vous y êtes presque</div>
 						</div>
 						<div class="col-md-12 col-lg-4">
 							<div id="etape3">
-								<div class="rond3">3 </div>Estimation du prix
-							</div>
+								<div class="rond3">3 </div>Estimation du prix</div>
 						</div>
 					</div>
 				</div>
