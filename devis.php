@@ -1,67 +1,11 @@
 <?php
 	
 	// ------------ DEVIS ------------ //
-	
-	// require_once('bdd.php'); //
-
 	session_start();
 	$afficheFormulaireInfoPerso = 1 ;
 	@$afficheFormulaireFormules1 = 0 ;
 	@$afficheFormulaireFormules2345 = 0 ;
 	@$affichePrix = 0;
- 
-    // ------------ TARIFS ------------//
-	$tarifs = array(
-		// tarifs basique   
-		"basique" => array(
-			"50km" => 90, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
-			"supKm" => 0.60, // Tarif du Kilomètre Suppélementaire (HT)
-			"temps" => 300, //  Durée du trajet (en minutes)
-			"tarif" => 210,
-		),
-		// tarifs 9m3
-		"9m3" => array(
-			"50km" => 95, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
-			"supKm" => 0.65, // Tarif du Kilomètre Suppélementaire (HT)
-			"temps" => 300, //  Durée du trajet (en minutes)
-			"tarif" => 251,
-		),
-		// tarifs 12m3
-		"12M3" => array(
-			"50km" => 100, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
-			"supKm" => 0.70, // Tarif du Kilomètre Suppélementaire (HT)
-			"temps" => 300, //  Durée du trajet (en minutes)
-			"tarif" => 268,
-		),
-		// tarifs 15m3
-		"15m3" => array(
-			"50km" => 105, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
-			"supKm" => 0.75, // Tarif du Kilomètre Suppélementaire (HT)
-			"temps" => 300, //  Durée du trajet (en minutes)
-			"tarif" => 285,
-		),
-		// tarifs 20m3
-		"20m3" => array(
-			"50km" => 105, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
-			"supKm" => 0.80, // Tarif du Kilomètre Suppélementaire (HT)
-			"temps" => 300, //  Durée du trajet (en minutes)
-			"tarif" => 302,
-		),
-		// tarifs 25m3
-		"25m3" => array(
-			"50km" => 115, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
-			"supKm" => 0.85, // Tarif du Kilomètre Suppélementaire (HT)
-			"temps" => 300, //  Durée du trajet (en minutes)
-			"tarif" => 319,
-		),
-		// tarifs 30m3
-		"30m3" => array(
-			"50km" => 120, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
-			"supKm" => 0.90, // Tarif du Kilomètre Suppélementaire (HT)
-			"temps" => 300, //  Durée du trajet (en minutes)
-			"tarif" => 336,
-		)
-	);
 
 	function write_object_to_console($data) {
 		$console = 'console.log(' . json_encode($data) . ');';
@@ -84,54 +28,45 @@
 		$_SESSION['tel'] = $_POST['tel'];
 		$_SESSION['mail'] = $_POST['mail'];
 		$_SESSION['entreprise'] = $_POST['entreprise'];
-
-		// affichage de variable :
-		write_to_console($_SESSION['formuleChoisie']);
-		write_to_console($_SESSION['nom']);
-		write_to_console($_SESSION['prenom']);
-		write_to_console($_SESSION['entreprise']);
-		write_to_console($_SESSION['tel']);
-		write_to_console($_SESSION['mail']);
+		$_SESSION['vehicule'] = $_POST['vehicule'];
 
 		//affichage du formulaire pour les autres formules
 		@$afficheFormulaireInfoPerso = 0;
 		@$afficheFormulaireFormules2345 = 1;
 	}
 		
-
 	if(isset($_POST['affichePrix'])){
 
 			$_SESSION['dep']=$_POST['dep'];
 			$_SESSION['ari']=$_POST['ari'];
 			$_SESSION['dateD'] = $_POST['dateDepart'];
-			$_SESSION['dateA'] = $_POST['dateArriver'];
-			$_SESSION['options'] = $_POST['dateArriver'];
 			$_SESSION['lavage'] = $_POST['lavage'];
 			$_SESSION['presentation'] = $_POST['presentation'];
-			
-			// affichage de variable :
-			write_to_console($_SESSION['dep']);
-			write_to_console($_SESSION['ari']);
-			write_to_console($_SESSION['dateD'] );
-			write_to_console($_SESSION['dateA']);
 			$affichePrix = 1;
 
 		if($_SESSION['formuleChoisie'] == "Active"){
+			write_to_console("MAUVAIS FORMULE");
+   		}
+
+		//sinon, si l'utilisateur choisi une autre formule...
+ 		if($_SESSION['formuleChoisie'] != "Active"){
+
+			 //si le bouton calculer est lancé, on récupère les informations du formulaire et on lance la fonction
+			$dep = $_SESSION['dep'];
+			$ari = $_SESSION['ari'];
+			$presentation = $_SESSION['presentation'];
+			$lavage = $_SESSION['lavage'];
+			$typeVehicule = $_SESSION['vehicule'];
 
 			@$afficheFormulaireInfoPerso = 0;
 			@$afficheFormulaireFormules2345 = 0;
-
-			@$prixKM = $leprix['prixKM']; // le prix sera variable en fonction de l'admin
-			@$prixVehicule = $leprix['prixVehicule']; // le prix sera variable en fonction de l'admin
-			@$prixService = $leprix['prixService'] ; // le prix sera variable en fonction de l'admin
+			@$prixKm=0;
 
 			//on créé la fonction
 			function calculer_distance($adresse1,$adresse2) {
-
 				$adresse1 = str_replace(" ", "+", $adresse1); //adresse de départ
 				$adresse2 = str_replace(" ", "+", $adresse2); //adresse d'arrivée
 				$url = 'https://maps.googleapis.com/maps/api/directions/xml?origin='.$adresse1.'&destination='.$adresse2.'&key=AIzaSyD_Ygw4nw_-Nwyv9JEtnmt8T6rpaGwFRIE'; //on créé l'url
-
 				//on lance une requete aupres de google map avec l'url créée
 				$ch = curl_init($url);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -151,133 +86,108 @@
 					//si l'info n'est pas récupérée, on lui attribu 0
 					return "0";
 				}
-			}	
-			//si le bouton calculer est lancé, on récupère les informations du formulaire et on lance la fonction
-			$dep = $_POST['dep'];
-			$ari = $_POST['ari'];
+			}
 
-			@$ladistance = (calculer_distance($dep,$ari)*2);
-			//calcul du prix total si l'utilisateur choisi la formule Active
-			$prix = $ladistance*$prixKM + $prixService + $prixVehicule ;
-			$phraseDistance = "la distance entre " .$dep. " et ".$ari." est de ".calculer_distance($dep,$ari)."KM" ;
-   		}
+			function calcule_prix($distance,$typeVehicule) {
+				// ------------ TARIFS ------------//
+				@$tarifs = array(
+					// tarifs basique   
+					"basique" => array(
+						"cinquantekm" => 90, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
+						"supKm" => 0.60, // Tarif du Kilomètre Suppélementaire (HT)
+					),
+					// tarifs 9m3
+					"neufMcube" => array(
+						"cinquantekm" => 95, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
+						"supKm" => 0.65, // Tarif du Kilomètre Suppélementaire (HT)
+					),
+					// tarifs 12m3
+					"douzeMcube" => array(
+						"cinquantekm" => 100, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
+						"supKm" => 0.70, // Tarif du Kilomètre Suppélementaire (HT)
+					),
+					// tarifs 15m3
+					"quinzeMcube" => array(
+						"cinquantekm" => 105, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
+						"supKm" => 0.75, // Tarif du Kilomètre Suppélementaire (HT)
+					),
+					// tarifs 20m3
+					"vingtMcube" => array(
+						"cinquantekm" => 105, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
+						"supKm" => 0.80, // Tarif du Kilomètre Suppélementaire (HT)
+					),
+					// tarifs 25m3
+					"vingtCinqMcube" => array(
+						"cinquantekm" => 115, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
+						"supKm" => 0.85, // Tarif du Kilomètre Suppélementaire (HT)
+					),
+					// tarifs 30m3
+					"trenteMcube" => array(
+						"cinquantekm" => 120, // Tarif pour une distance totale inférieure ou égale à 50km (HT)
+						"supKm" => 0.90, // Tarif du Kilomètre Suppélementaire (HT)
+					)
+				);
 
-		//sinon, si l'utilisateur choisi une autre formule...
- 		if($_SESSION['formuleChoisie'] != "Active"){
-			//on créé la fonction
-			function calculer_distance($adresse1,$adresse2) {
-				$adresse1 = str_replace(" ", "+", $adresse1); //adresse de départ
-				$adresse2 = str_replace(" ", "+", $adresse2); //adresse d'arrivée
-				$url = 'https://maps.googleapis.com/maps/api/directions/xml?origin='.$adresse1.'&destination='.$adresse2.'&key=AIzaSyD_Ygw4nw_-Nwyv9JEtnmt8T6rpaGwFRIE'; //on créé l'url
-				//on lance une requete aupres de google map avec l'url créée
-				$ch = curl_init($url);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
-				$xml = curl_exec($ch);
-
-				//on réccupère les infos
-				$charger_googlemap = simplexml_load_string($xml);
-				$distance = $charger_googlemap->route->leg->distance->value;
-
-				//si l'info est récupérée, on calcule la distance
-				if ($charger_googlemap->status == "OK") {
-					$distance = $distance/1000;
-					$distance = number_format($distance, 2, '.', ' ');
-					return $distance;
-				}else {
-					//si l'info n'est pas récupérée, on lui attribu 0
-					return "0";
+				if($distance>50.0){
+					$prixKm = ($distance - 50.0) * $tarifs[$typeVehicule]['supKm'];
+					$prixKm = $prixKm + $tarifs[$typeVehicule]['cinquantekm'];
+				} else {
+					$prixKm = $tarifs[$typeVehicule]['cinquantekm'];
+				}
+				return $prixKm;
+			}
+            
+			function sous_24h($dateD){
+				$cDate = strtotime(date($dateD));
+				if($cDate <= (time() + 86400)){
+					write_to_console('oui');
+					$_SESSION['prixDouble'] = 'OUI';
+					return true;
+				}
+				else
+				{	
+					write_to_console('Non');
+					$_SESSION['prixDouble'] = 'NON';
+					return false; 
 				}
 			}
 
-			//si le bouton calculer est lancé, on récupère les informations du formulaire et on lance la fonction
-			$dep = $_SESSION['dep'];
-			$ari = $_SESSION['ari'];
-
-			@$afficheFormulaireInfoPerso = 0;
-			@$afficheFormulaireFormules2345 = 0;
-			@$ladistance = (calculer_distance($dep,$ari)*2);
-			@$volumeTotal = htmlspecialchars($_POST['volume']);
-			@$etagesDepart = htmlspecialchars($_POST['etagesDepart']);
-			@$etagesArrive = htmlspecialchars($_POST['etagesArrive']);
-
-			$_SESSION['volume'] = $volumeTotal;
-			$_SESSION['type'] = $_POST['type'];
-			$_SESSION['etagesDep'] = $_POST['etagesDepart'];
-			$_SESSION['etagesAri'] = $_POST['etagesArrive'];
-			$_SESSION['ascenseurDepart'] = $_POST['ascenseurDepart'];
-			$_SESSION['ascenseurArrive'] = $_POST['ascenseurArrive'];
-
-			//-------------------FIXAGE DES PRIX----------------------\\
-
-			@$prixM3 = $leprix['prixM3']; // le prix sera variable en fonction de l'admin
-			@$prixKM = $leprix['prixKM']; // le prix sera variable en fonction de l'admin
-			@$prixEtage = $leprix['prixEtage']; // le prix sera variable en fonction de l'admin
-			@$pourcentageMaisonMaison = $leprix['pourcentageMaisonMaison']; // le prix sera variable en fonction de l'admin
-			@$pourcentageMaisonAppartement = $leprix['pourcentageMaisonAppartement']; // le prix sera variable en fonction de l'admin
-			@$pourcentageAppartementAppartement = $leprix['pourcentageAppartementAppartement']; // le prix sera variable en fonction de l'admin
-			@$pourcentageAscenseurOui = $leprix['pourcentageAscenseurOui'] ; // le prix sera variable en fonction de l'admin
-			@$pourcentageAscenseurNon = $leprix['pourcentageAscenseurNon'] ; // le prix sera variable en fonction de l'admin
-			@$prixFormuleSimple = $leprix['prixFormuleSimple'] ; // le prix sera variable en fonction de l'admin
-			@$prixFormuleEco = $leprix['prixFormuleEco'] ; // le prix sera variable en fonction de l'admin
-			@$prixFormuleZen = $leprix['prixFormuleZen'] ; // le prix sera variable en fonction de l'admin
-			@$prixFormuleLuxe = $leprix['prixFormuleLuxe'] ; // le prix sera variable en fonction de l'admin
-
-			//----- CA CONTINUE.... ------\\
-			@$prixVolume = ($volumeTotal * $prixM3) ;
-			@$prixMaisonMaison = ($prixVolume * $pourcentageMaisonMaison/100);
-			@$prixMaisonAppartement = ($prixVolume * $pourcentageMaisonAppartement/100);
-			@$prixAppartementAppartement = ($prixVolume * $pourcentageAppartementAppartement/100);
-
-			if($_SESSION['formuleChoisie'] == "Simple"){
-				$prixService = $prixFormuleSimple ; 
+			function calcule_options($prixKM){
+				@$prixFinal=$prixKM;
+				if($_SESSION['presentation']){
+					$_SESSION['presentation']='OUI';
+					$prixFinal=$prixFinal+20;
+				} 
+				else {
+					$_SESSION['presentation']='NON';
+				}
+				if($_SESSION['lavage']){
+					$_SESSION['lavage']='OUI';
+					$prixFinal=$prixFinal+20;
+				}
+				else {
+					$_SESSION['lavage']='NON';
+				}
+				return $prixFinal;
 			}
 
-			if($_SESSION['formuleChoisie'] == "Eco"){
-				$prixService = $prixFormuleEco ; 
-			}
+			function gare_a_5km($prixKM){
 
-			if($_SESSION['formuleChoisie'] == "Zen"){
-				$prixService = $prixFormuleZen ; 
-			}
-
-			if($_SESSION['formuleChoisie'] == "Luxe"){
-				$prixService = $prixFormuleLuxe ; 
-			}
-
-			if($_POST['type'] == "AppartMaison"){
-				$prixType = $prixMaisonAppartement;
-			}
-
-			if($_POST['type'] == "MaisonMaison"){
-				$prixType = $prixMaisonMaison;
-			}
-
-			if($_POST['type'] == "AppartAppart"){
-				$prixType = $prixAppartementAppartement;
-			}
-
-			if($_POST['ascenseurDepart'] == "oui"){
-				@$ascenseurDepart = $prixVolume * ($pourcentageAscenseurOui / 100);
-			}
-
-			if($_POST['ascenseurDepart'] == "non"){
-				@$ascenseurDepart = $prixVolume * ($pourcentageAscenseurNon / 100);
-			}
-
-			if($_POST['ascenseurArrive'] == "oui"){
-				@$ascenseurArrive = $prixVolume * ($pourcentageAscenseurOui / 100);
-			}
-
-			if($_POST['ascenseurArrive'] == "non"){
-				@$ascenseurArrive = $prixVolume * ($pourcentageAscenseurNon / 100);
 			}
 
 			//----------------FIN DES FIXAGE ET CALCUL DES PRIX--------------------\\
 			//calcul du prix total ( autres formules )
-			$prix = ($prixKM * $ladistance) + $prixVolume + ($prixEtage * $etagesDepart) + ($prixEtage * $etagesArrive) + @$prixType + $ascenseurDepart + $ascenseurArrive + $prixService;
-			$phraseDistance = "la distance entre " .$dep. " et ".$ari." est de ".calculer_distance($dep,$ari)."KM" ;
-			$_SESSION['date'] = $_POST['date'];
+
+			@$ladistance = (calculer_distance($dep,$ari)*2);
+			@$prixKm=calcule_prix($ladistance,$typeVehicule);
+			@$prixTotal=0;
+			if(sous_24h($_SESSION['dateD'])==true){
+				write_to_console('sous_24h');
+				$prixTotal = calcule_options($prixKm*2);
+			}else{
+				$prixTotal = calcule_options($prixKm);
+			}
+			@$phraseDistance = "La distance entre " .$dep. " et ".$ari." est de ".$ladistance."KM" ;
 		}
  	}
 ?>
@@ -600,7 +510,7 @@
 						</div>
 						<div class="col-md-12 col-lg-4">
 							<div id="etape2">
-								<div class="rond2">2 </div>vous y êtes presque</div>
+								<div class="rond2">2 </div>Vous y êtes presque</div>
 						</div>
 						<div class="col-md-12 col-lg-4">
 							<div id="etape3">
@@ -612,7 +522,7 @@
 				<form action="" method="POST">
 					<?php if($afficheFormulaireInfoPerso == 1) :?>
 						<div class="form-style-10">
-							<div class="divider section" align="center">Informations</div>
+							<div class="divider section" align="center">Informations général </div>
 							<div class="inner-wrap">
 								<div class="row">
 									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -655,11 +565,11 @@
 									</div>
 								</div>
 							</div>
-							<div class="divider section" align="center">Choix de segment</div>
+							<div class="divider section" align="center">Choix de catégorie</div>
 							<div class="inner-wrap">
 								<label>
-									<select name="formule" required class="form-control rounded">
-										<option value="basique">Citadine, Berline, Sportive, SUV, Monospace, 3m3, 6m3</option>
+									<select name="vehicule" required class="form-control rounded">
+										<option value="basique">Basique (Citadine, Berline, Sportive, SUV, Monospace, 3m3, 6m3)</option>
 										<option value="9m3">9m3</option>
 										<option value="12m2">12m3</option>
 										<option value="15m2">15m3</option>
@@ -685,11 +595,14 @@
 					<?php endif; ?>
 					<?php if($afficheFormulaireFormules2345==1) :?>
 						<div class="form-style-10">
-							<div class="section">calcul de votre devis</div>
+							<div class="section">Informations pratique</div>
 							<div class="inner-wrap">
 								<div class="row">
 									<div class="col-md-6">
-										<label for="origin"><i class="fas fa-map-marker-alt"></i> Lieu de départ</label>
+										<label for="origin">
+											<i class="fas fa-map-marker-alt"></i>
+											 Lieu de départ
+										</label>
 										<input type="text" id="origin" required name="dep"
 											style="height:50px; margin-bottom:10px;"
 											placeholder="adresse, n° de voie,  Code postal, Commune"
@@ -697,7 +610,10 @@
 									</div>
 									<br />
 									<div class="col-md-6">
-										<label for="ari"><i class="fas fa-map-marker-alt"></i> Lieu d'arrivée</label>
+										<label for="ari">
+											<i class="fas fa-map-marker-alt"></i> 
+											Lieu d'arrivée
+										</label>
 										<input type="text" id="ari" required name="ari" style="height:50px;"
 											placeholder="adresse, n° de voie,  Code postal, Commune"
 											class="form-control  rounded">
@@ -706,27 +622,27 @@
 								<div class="row">
 									<div class="col-md-6">
 										<label for="type">
-											<i class="fas fa-building"></i>
+											<i class="fa-solid fa-person-chalkboard"></i>
+											<input type="checkbox" name="presentation" value="presentation"> 
+											Présentation
 										</label>
-										<input type="checkbox" name="presentation" value="presentation">Présentation
 									</div>
 									<div class="col-md-6">
 										<label for="type">
-											<i class="fas fa-building"></i>
+											<i class="fa-solid fa-car-wash"></i>
+											<input type="checkbox" name="lavage" value="lavage">
+											 Lavage
 										</label>
-										<input type="checkbox" name="lavage" value="lavage">Lavage
 									</div>
 								</div>
 							<div class="section">Plannification du convoyage</div>
 							<div class="inner-wrap">
 								<div class="row">
-									<div class="col-md-6">
+									<div class="col-md-12">
 									<label><i class="fas fa-ellipsis-v"></i> Date et Heure de départ</label>
-										<label><input type="datetime-local" name="dateDepart" class="form-control"></label>
-									</div>
-									<div class="col-md-6">
-									<label><i class="fas fa-ellipsis-v"></i> Date et Heure d'arrivée</label>
-										<label><input type="datetime-local" name="dateArriver" class="form-control"></label>
+										<label>
+											<input type="datetime-local" name="dateDepart" class="form-control">
+										</label>
 									</div>
 								</div>
 							</div>
@@ -750,56 +666,77 @@
 						</div>
 					<?php endif; ?>
 					<?php 
-						if(isset($_POST['affichePrix']) && $_SESSION['formuleChoisie']=="Active"){
-							$affichePrix = 1;
-							echo '  
-								<br>
-								<div class="row">
-									<div class="col-md-6 offset-3 order-md-2 mb-4">
-									<H3>
-										<span class="text-muted">RECAPITULATIF</span>
-									</h3>
-									<span class="text-muted">'.$phraseDistance.'</span>
+						if(isset($_POST['affichePrix'])){
+							@$recapDevis='  <br><div class="row">
+							<div class="col-md-6 offset-3 order-md-2 mb-4">
+							<H3>
+								<span class="text-muted">RECAPITULATIF</span>
+							</h3>
+								<span class="text-muted">'.$phraseDistance.'</span>
+							</div>
+							<div class="col-md-6 offset-3 order-md-2 mb-4">
+							<ul class="list-group mb-3">
+							<li class="d-flex justify-content-between lh-condensed">
+								<div>
+									<h6 class="my-0">Date de convoyage</h6>
 								</div>
-								<div class="col-md-6 offset-3 order-md-2 mb-4">
-									<ul class="list-group mb-3">
-										<li class="d-flex justify-content-between lh-condensed">
-											<div>
-												<h6 class="my-0">Distance (aller/retour)</h6>
-												<small class="text-muted">ici et la</small>
-											</div>
-											<span class="text-muted">'.$ladistance.' km</span>
-										</li>
-										<li class="d-flex justify-content-between lh-condensed">
-											<div>
-												<h6 class="my-0">Prix du Service</h6>
-												<small class="text-muted">texte ici</small>
-											</div>
-											<span class="text-muted">'.$prixService.'€</span>
-										</li>
-										<li class="d-flex justify-content-between lh-condensed">
-											<div>
-												<h6 class="my-0">Prix du Vehicule</h6>
-												<small class="text-muted">Bref voila</small>
-											</div>
-											<span class="text-muted">'.$prixVehicule.'€</span>
-										</li>
-										<li class="d-flex justify-content-between">
-											<span>Total</span>
-											<strong>'.$prix.'€</strong>
-										</li>
-									</ul>
-									<div align="center">
-										<a href="https://trans-imj.com/devis.php">
-											<button type="button" value="Retour" class="btn btn-danger">Retour</button>
-										</a>
-									</div>';
+								<span class="text-muted">'.date($_SESSION['dateD']).'</span>
+								</li>
+								<li class="d-flex justify-content-between lh-condensed">
+								<div>
+									<h6 class="my-0">Distance</h6>
+									<small class="text-muted">Total en Km</small>
+								</div>
+								<span class="text-muted">'.$ladistance.'</span>
+								</li>
+								<li class="d-flex justify-content-between lh-condensed">
+								<div>
+									<h6 class="my-0">Tarif pour une distance inférieure ou égale à 50km </h6>
+									<small class="text-muted">(HT)</small>
+								</div>
+								<span class="text-muted">'.$prixKm.'€</span>
+								</li>
+								<li class="d-flex justify-content-between lh-condensed">
+								<div>
+									<h6 class="my-0">Lavage</h6>
+									<small class="text-muted">20€</small>
+								</div>
+								<span class="text-muted">'.$_SESSION['lavage'].'</span>
+								</li>
+								<li class="d-flex justify-content-between lh-condensed">
+								<div>
+									<h6 class="my-0">Presentation</h6>
+									<small class="text-muted">20€</small>
+								</div>
+								<span class="text-muted">'.$_SESSION['presentation'].'</span>
+								</li>
+								<li class="d-flex justify-content-between lh-condensed">
+								<div>
+									<h6 class="my-0">Demande sous 24h</h6>
+									<small class="text-muted">Prix location vehicule x2 </small>
+								</div>
+								<span class="text-muted"> '.$_SESSION['prixDouble'].'</span>
+								</li>
+								<li class="d-flex justify-content-between">
+								<span>Total</span>
+								<strong>'.$prixTotal.'€</strong>
+								</li>
+							</ul>
+							</div>
+							</div>
+						</div>' ;
+							$affichePrix = 1;
+							echo $recapDevis.'
+							<div align="center">
+							<a href="https://herculis.banceparis.fr/devis.php">
+								<button type="button" value="Retour" class="btn btn-danger">Retour</button></a>
+							';
 							$to = "merilb78@gmail.com";
-							$from = "DEVIS@transIMJ.com ";
+							$from = "DEVIS@yncigne.com ";
 							ini_set("SMTP","smtp.gmail.com");
-							$subject 	= "Trans-IMJ.com - Devis de ".$_SESSION['nom'] ;
+							$subject 	= "Trans-IMJ.com - Devis de ".$_SESSION['nom']." ".$_SESSION['nom'];
 							$mail_Data = "";
-							$mail_Data .= '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns:v="urn:schemas-microsoft-com:vml">';
+							$mail_Data .= '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> <html xmlns:v="urn:schemas-microsoft-com:vml">';
 							$mail_Data .= "<head> \n";
 							$mail_Data .= '<meta http-equiv="content-type" content="text/html; charset=utf-8">';
 							$mail_Data .= '<meta name="viewport" content="width=device-width; initial scale=1.0; maximum-scale=1.0;">';
@@ -807,16 +744,7 @@
 							$mail_Data .= "</head> \n";
 							$mail_Data .= "<body> \n";
 							$mail_Data .= "<br>";
-							$mail_Data .= "<label><b>Formule choisie : ACTIVE <span style=\"color:#DB4437;\">*</span></b></label> ";
-							$mail_Data .= "<br>";
-							$mail_Data .= "Date prévue : ";
-							$mail_Data .= $_SESSION['date'];
-							$mail_Data .= "<br>";
-							$mail_Data .= "adresse de départ : ";
-							$mail_Data .= $_SESSION['dep'];
-							$mail_Data .= '<br>';
-							$mail_Data .="<label><b>adresse Arrivée : </label> ";
-						    $mail_Data .= $_SESSION['ari'];
+							$mail_Data .= "<label><b>Formule choisie : ACTIVE <span style=\"color:#Ff6666;\">*</span></b></label> ";
 							$mail_Data .= "<br>";
 							$mail_Data .= " informations Client : ";
 							$mail_Data .= $_SESSION['nom'] ." | ".$_SESSION['prenom'];
@@ -827,6 +755,7 @@
 							$mail_Data .= "<br>" ;				
 							$mail_Data .= "total : ";
 							$mail_Data .= $prix;
+							$mail_Data .=$recapDevis;
 							$mail_Data .="<p> Email envoyé automatiquement depuis le site trans-imj.com </p>";				
 							$mail_Data .= "<br> \n";
 							$mail_Data .= "</body> \n";
@@ -843,10 +772,11 @@
 							// 
 							$CR_Mail = @mail ($to,utf8_decode($subject), utf8_decode($mail_Data), $headers);
 						}
-					?>
-					<!--<input style="float: right;"type="submit" name="soumettre" value="Soumettre le devis" class="btn btn-success"/>-->
-				</form>
+					?>	
+				</div>
 			</div>
-		</section>
-	</body>
+		</form>
+</div>
+</section>
+</body>
 </html>
