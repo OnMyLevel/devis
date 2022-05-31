@@ -6,6 +6,7 @@
 	@$afficheFormulaireFormules1 = 0 ;
 	@$afficheFormulaireFormules2345 = 0 ;
 	@$affichePrix = 0;
+	$_SESSION['vehicule']='basique';
 
 	function write_object_to_console($data) {
 		$console = 'console.log(' . json_encode($data) . ');';
@@ -56,7 +57,7 @@
 			$ari = $_SESSION['ari'];
 			$presentation = $_SESSION['presentation'];
 			$lavage = $_SESSION['lavage'];
-			$typeVehicule = $_SESSION['vehicule'];
+			@$typeVehicule = $_SESSION['vehicule'];
 
 			@$afficheFormulaireInfoPerso = 0;
 			@$afficheFormulaireFormules2345 = 0;
@@ -691,6 +692,13 @@
 								</li>
 								<li class="d-flex justify-content-between lh-condensed">
 								<div>
+									<h6 class="my-0">Type de vehicule </h6>
+									<small class="text-muted">Catégorie</small>
+								</div>
+								<span class="text-muted">'.$typeVehicule.'€</span>
+								</li>
+								<li class="d-flex justify-content-between lh-condensed">
+								<div>
 									<h6 class="my-0">Tarif pour une distance inférieure ou égale à 50km </h6>
 									<small class="text-muted">(HT)</small>
 								</div>
@@ -752,10 +760,17 @@
 							$mail_Data .= $_SESSION['tel'];
 							$mail_Data .= "<br>";
 							$mail_Data .= $_SESSION['mail'];
+							$mail_Data .= "<br>" ;
+							$mail_Data .= " informations sur Convoyage : ";
+							$mail_Data .= $_SESSION['nom'] ." | ".$_SESSION['prenom'];
+							$mail_Data .= "<br />";
+							$mail_Data .= $_SESSION['tel'];
+							$mail_Data .= "<br>";
+							$mail_Data .= $_SESSION['mail'];
 							$mail_Data .= "<br>" ;				
+							$mail_Data .= "total : ";				
 							$mail_Data .= "total : ";
 							$mail_Data .= $prix;
-							$mail_Data .=$recapDevis;
 							$mail_Data .="<p> Email envoyé automatiquement depuis le site trans-imj.com </p>";				
 							$mail_Data .= "<br> \n";
 							$mail_Data .= "</body> \n";
