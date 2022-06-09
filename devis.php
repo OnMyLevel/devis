@@ -28,8 +28,10 @@
 		$_SESSION['prenom'] = $_POST['prenom'];
 		$_SESSION['tel'] = $_POST['tel'];
 		$_SESSION['mail'] = $_POST['mail'];
+		$_SESSION['entrepriseName'] = $_POST['entrepriseName'];
 		$_SESSION['entreprise'] = $_POST['entreprise'];
 		$_SESSION['vehicule'] = $_POST['vehicule'];
+		$_SESSION['velectrique'] = $_POST['velectrique'];
 
 		//affichage du formulaire pour les autres formules
 		@$afficheFormulaireInfoPerso = 0;
@@ -38,11 +40,18 @@
 		
 	if(isset($_POST['affichePrix'])){
 
-			$_SESSION['dep']=$_POST['dep'];
-			$_SESSION['ari']=$_POST['ari'];
-			$_SESSION['dateD'] = $_POST['dateDepart'];
+			if (isset($_POST['dep']) && isset($_POST['ari'])) {
+				$_SESSION['dep']=$_POST['dep'];
+				$_SESSION['ari']=$_POST['ari'];
+			}
+
+			if (isset($_POST['dateDepart']) && isset($_POST['dateArrivee'])) {
+				$_SESSION['dateD'] = $_POST['dateDepart'];
+				$_SESSION['dateA'] = $_POST['dateArrivee'];	
+			}
 			$_SESSION['lavage'] = $_POST['lavage'];
 			$_SESSION['presentation'] = $_POST['presentation'];
+			$_SESSION['gare'] = $_POST['gare'];
 			$affichePrix = 1;
 
 		if($_SESSION['formuleChoisie'] == "Active"){
@@ -57,6 +66,7 @@
 			$ari = $_SESSION['ari'];
 			$presentation = $_SESSION['presentation'];
 			$lavage = $_SESSION['lavage'];
+			$gare = $_SESSION['gare'];
 			@$typeVehicule = $_SESSION['vehicule'];
 
 			@$afficheFormulaireInfoPerso = 0;
@@ -82,6 +92,7 @@
 				if ($charger_googlemap->status == "OK") {
 					$distance = $distance/1000;
 					$distance = number_format($distance, 2, '.', ' ');
+					$_SESSION['distanceTotal']=$distance;
 					return $distance;
 				} else {
 					//si l'info n'est pas récupérée, on lui attribu 0
@@ -141,13 +152,11 @@
 			function sous_24h($dateD){
 				$cDate = strtotime(date($dateD));
 				if($cDate <= (time() + 86400)){
-					write_to_console('oui');
 					$_SESSION['prixDouble'] = 'OUI';
 					return true;
 				}
 				else
 				{	
-					write_to_console('Non');
 					$_SESSION['prixDouble'] = 'NON';
 					return false; 
 				}
@@ -169,11 +178,27 @@
 				else {
 					$_SESSION['lavage']='NON';
 				}
+				if($_SESSION['gare']){
+					$_SESSION['gare']='OUI';
+					$prixFinal=$prixFinal+20;
+				}
+				else {
+					$_SESSION['gare']='NON';
+				}
+				$_SESSION['prixTotal']=$prixFinal;
 				return $prixFinal;
 			}
 
-			function gare_a_5km($prixKM){
+			function formateDate(){
+			}
 
+			function prixAvecTaxe($prix){
+				$prixTTC=0;
+				if($_SESSION['entreprise']){
+					$prixTTC = $prix*0.20;
+				}
+				write_to_console($prixTTC);
+				return $prixTTC;
 			}
 
 			//----------------FIN DES FIXAGE ET CALCUL DES PRIX--------------------\\
@@ -182,11 +207,38 @@
 			@$ladistance = (calculer_distance($dep,$ari)*2);
 			@$prixKm=calcule_prix($ladistance,$typeVehicule);
 			@$prixTotal=0;
+			@$prixTotalTTC=0;
+			@$textprixTTC='';
+			@$mailprixTTC='';
+			
 			if(sous_24h($_SESSION['dateD'])==true){
-				write_to_console('sous_24h');
 				$prixTotal = calcule_options($prixKm*2);
+				$prixTotalTTC = prixAvecTaxe($prixTotal);
+				$_SESSION['prix_total']=$prixTotal;
 			}else{
 				$prixTotal = calcule_options($prixKm);
+				$prixTotalTTC = prixAvecTaxe($prixTotal);
+				$_SESSION['prix_total']=$prixTotal;
+			}
+			if($_SESSION['entreprise']){
+				$textprix = '<li class="d-flex justify-content-between">
+									<span>Total HT</span>
+									<strong>'.$prixTotal.'€</strong>
+								</li>
+								<li class="d-flex justify-content-between">
+									<span>Total TTC</span>
+									<strong>'.$prixTotalTTC.'€</strong>
+								</li>'
+								;
+				$mailprix= "Prix total HT: "." ".$_SESSION['prixTotal'];
+				     		   " <br/> 
+							   Prix total TTC: "." ".$_SESSION['prixTotalTTC'];
+			}else{
+				$textprix = '<li class="d-flex justify-content-between">
+									<span>Total </span>
+									<strong>'.$prixTotal.'€</strong>
+								</li>';
+				$mailprix = "Prix total: "." ".$_SESSION['prixTotal'];
 			}
 			@$phraseDistance = "La distance entre " .$dep. " et ".$ari." est de ".$ladistance."KM" ;
 		}
@@ -196,10 +248,17 @@
 <!DOCTYPE html>
 <html lang="fr">
 	<head>
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" 
+		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 		<link href='https://fonts.googleapis.com/css?family=Bitter' rel='stylesheet' type='text/css'>
 		<style type="text/css">
 			body {
 				background-color: #FFF;
+			}
+
+			.container{
+				width: 80%;
 			}
 
 			.form-style-10 {
@@ -459,6 +518,7 @@
 				margin-top: -3px;
 			}
 		</style>
+
 		<script src="https://kit.fontawesome.com/3e8af49a76.js" crossorigin="anonymous"></script>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -467,8 +527,6 @@
 		<title> Devis en ligne - Incygne</title>
 		<!--<link rel="icon" type="image/x-icon" href="assets/img/favicon.ico" /> -->
 		<!-- Font Awesome icons (free version)-->
-		<!-- Core theme CSS (includes Bootstrap)-->
-		<link href="css/style.css" rel="stylesheet" />
 		<!-- autocompletion adresseArrives -->
 		<script type="text/javascript"
 			src="https://maps.google.com/maps/api/js?libraries=places&language=fr&key=AIzaSyD_Ygw4nw_-Nwyv9JEtnmt8T6rpaGwFRIE">
@@ -507,15 +565,15 @@
 					<div class="row">
 						<div class="col-md-12 col-lg-4">
 							<div id="etape1">
-								<div class="rond1">1 </div>Coordonnés et formule</div>
+								<div class="rond1">1 </div>Coordonnées client</div>
 						</div>
 						<div class="col-md-12 col-lg-4">
 							<div id="etape2">
-								<div class="rond2">2 </div>Vous y êtes presque</div>
+								<div class="rond2">2 </div>Infos sur le convoyage</div>
 						</div>
 						<div class="col-md-12 col-lg-4">
 							<div id="etape3">
-								<div class="rond3">3 </div>Estimation du prix</div>
+								<div class="rond3">3 </div>Estimation du devis</div>
 						</div>
 					</div>
 				</div>
@@ -537,11 +595,19 @@
 										</label>
 									</div>
 								</div>
-								<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-									<label>
-										<input type="text" required name="entreprise" placeholder="Nom entreprise"
-											class="form-control  rounded">
-									</label>
+								<div class="row">
+									<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+										<label for="type">
+											<i class="fa-solid fa-car-wash"></i>
+											Vous êtes un professionel ? <input type="checkbox" name="entreprise" value="velectrique">
+										</label>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+										<label>
+											<input type="text" required name="entrepriseName" placeholder="Nom entreprise"
+												class="form-control  rounded">
+										</label>
+									</div>
 								</div>
 								<div class="row">
 									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -567,18 +633,26 @@
 								</div>
 							</div>
 							<div class="divider section" align="center">Choix de catégorie</div>
-							<div class="inner-wrap">
-								<label>
-									<select name="vehicule" required class="form-control rounded">
-										<option value="basique">Basique (Citadine, Berline, Sportive, SUV, Monospace, 3m3, 6m3)</option>
-										<option value="9m3">9m3</option>
-										<option value="12m2">12m3</option>
-										<option value="15m2">15m3</option>
-										<option value="20m3">20m3</option>
-										<option value="25m3">25m3</option>
-										<option value="30m3">30m3</option>
-									</select>
-								</label>
+							<div class="row">
+								<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+									<label for="type">
+										<i class="fa-solid fa-car-wash"></i>
+										C'est une voiture électrique ?  <input type="checkbox" name="velectrique" value="velectrique">
+									</label>
+								</div>
+								<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+									<label>
+										<select name="vehicule" required class="form-control rounded">
+											<option value="basique">Basique (Citadine, Berline, Sportive, SUV, Monospace, 3m3, 6m3)</option>
+											<option value="9m3">9m3</option>
+											<option value="12m2">12m3</option>
+											<option value="15m2">15m3</option>
+											<option value="20m3">20m3</option>
+											<option value="25m3">25m3</option>
+											<option value="30m3">30m3</option>
+										</select>
+									</label>
+								</div>
 							</div>
 							<div class="button-section">
 								<input type="submit" style="width:100%; margin:0;" name="valider" value="Continuer"
@@ -621,28 +695,41 @@
 									</div>
 								</div>
 								<div class="row">
-									<div class="col-md-6">
+									<div class="col-md-4">
 										<label for="type">
 											<i class="fa-solid fa-person-chalkboard"></i>
 											<input type="checkbox" name="presentation" value="presentation"> 
 											Présentation
 										</label>
 									</div>
-									<div class="col-md-6">
+									<div class="col-md-4">
 										<label for="type">
 											<i class="fa-solid fa-car-wash"></i>
 											<input type="checkbox" name="lavage" value="lavage">
 											 Lavage
 										</label>
 									</div>
+									<div class="col-md-4">
+										<label for="type">
+											<i class="fa-solid fa-car-wash"></i>
+											<input type="checkbox" name="gare" value="gare">
+											Gare à moins de 5km ? 
+										</label>
+									</div>
 								</div>
 							<div class="section">Plannification du convoyage</div>
 							<div class="inner-wrap">
 								<div class="row">
-									<div class="col-md-12">
-									<label><i class="fas fa-ellipsis-v"></i> Date et Heure de départ</label>
+									<div class="col-md-6">
+									<label><i class="fas fa-ellipsis-v"></i> Date et heure de départ</label>
 										<label>
 											<input type="datetime-local" name="dateDepart" class="form-control">
+										</label>
+									</div>
+									<div class="col-md-6">
+									<label><i class="fas fa-ellipsis-v"></i>Date et heure d'arrivée</label>
+										<label>
+											<input type="datetime-local" name="dateArrivee" class="form-control">
 										</label>
 									</div>
 								</div>
@@ -660,7 +747,6 @@
 													name="affichePrix" value="Je calcule mon tarif !"
 													class="btn btn-lg btn-primary " />
 											</label>
-
 										</div>
 									</div>
 								</div>
@@ -679,9 +765,10 @@
 							<ul class="list-group mb-3">
 							<li class="d-flex justify-content-between lh-condensed">
 								<div>
-									<h6 class="my-0">Date de convoyage</h6>
+									<h6 class="my-0">Date</h6>
 								</div>
 								<span class="text-muted">'.date($_SESSION['dateD']).'</span>
+								<span class="text-muted">'.date($_SESSION['dateA']).'</span>
 								</li>
 								<li class="d-flex justify-content-between lh-condensed">
 								<div>
@@ -726,7 +813,7 @@
 								<span class="text-muted"> '.$_SESSION['prixDouble'].'</span>
 								</li>
 								<li class="d-flex justify-content-between">
-								<span>Total</span>
+								<span>Total HT</span>
 								<strong>'.$prixTotal.'€</strong>
 								</li>
 							</ul>
@@ -736,13 +823,13 @@
 							$affichePrix = 1;
 							echo $recapDevis.'
 							<div align="center">
-							<a href="https://herculis.banceparis.fr/devis.php">
+							<a href="https://www.convoyage-incygne.fr/devis.php">
 								<button type="button" value="Retour" class="btn btn-danger">Retour</button></a>
 							';
 							$to = "merilb78@gmail.com";
-							$from = "DEVIS@yncigne.com ";
+							$from = "devis@convoyage-incygne.com ";
 							ini_set("SMTP","smtp.gmail.com");
-							$subject 	= "Trans-IMJ.com - Devis de ".$_SESSION['nom']." ".$_SESSION['nom'];
+							$subject 	= "convoyage-incygne.com - devis de ".$_SESSION['nom']." ".$_SESSION['nom'];
 							$mail_Data = "";
 							$mail_Data .= '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> <html xmlns:v="urn:schemas-microsoft-com:vml">';
 							$mail_Data .= "<head> \n";
@@ -752,26 +839,38 @@
 							$mail_Data .= "</head> \n";
 							$mail_Data .= "<body> \n";
 							$mail_Data .= "<br>";
-							$mail_Data .= "<label><b>Formule choisie : ACTIVE <span style=\"color:#Ff6666;\">*</span></b></label> ";
-							$mail_Data .= "<br>";
-							$mail_Data .= " informations Client : ";
-							$mail_Data .= $_SESSION['nom'] ." | ".$_SESSION['prenom'];
+							$mail_Data .= " Information sur client : ";
+							$mail_Data .= "Nom prénom".$_SESSION['nom'] ." ".$_SESSION['prenom'];
 							$mail_Data .= "<br />";
-							$mail_Data .= $_SESSION['tel'];
+							$mail_Data .= "Numéro de téléphone: ".$_SESSION['tel'];
 							$mail_Data .= "<br>";
-							$mail_Data .= $_SESSION['mail'];
+							$mail_Data .= "Adresse mail: ".$_SESSION['mail'];
 							$mail_Data .= "<br>" ;
-							$mail_Data .= " informations sur Convoyage : ";
-							$mail_Data .= $_SESSION['nom'] ." | ".$_SESSION['prenom'];
+							$mail_Data .= " Information sur le convoyage : ";
+							$mail_Data .= "Distance total : ".$_SESSION['distanceTotal']." KM";
 							$mail_Data .= "<br />";
-							$mail_Data .= $_SESSION['tel'];
+							$mail_Data .= "Type véhicule : ".$_SESSION['vehicule'];
 							$mail_Data .= "<br>";
-							$mail_Data .= $_SESSION['mail'];
-							$mail_Data .= "<br>" ;				
-							$mail_Data .= "total : ";				
-							$mail_Data .= "total : ";
-							$mail_Data .= $prix;
-							$mail_Data .="<p> Email envoyé automatiquement depuis le site trans-imj.com </p>";				
+							$mail_Data .= "Date de départ : "." ".date($_SESSION['dateD']);
+							$mail_Data .= "<br>";
+							$mail_Data .= "Date d'arrivée: "." ".date($_SESSION['dateA']);
+							$mail_Data .= "<br>";
+							$mail_Data .= "Adresse de départ : "." ".$_SESSION['dep'];
+							$mail_Data .= "<br>";
+							$mail_Data .= "Adresse d'arrivée: "." ".$_SESSION['ari'];
+							$mail_Data .= "<br>";
+							$mail_Data .= "Gare à proximité : "." ".$_SESSION['gare'];
+							$mail_Data .= "<br>";
+							$mail_Data .= "<br>";
+							$mail_Data .= "Lavage : "." ".$_SESSION['lavage'];
+							$mail_Data .= "<br>";
+							$mail_Data .= "Presentation : "."  ".$_SESSION['presentation'];
+							$mail_Data .= "<br>";
+							$mail_Data .= "Prix double: "." ".$_SESSION['prixDouble'];
+							$mail_Data .= "<br>";	
+							$mail_Data .= "<br>";			
+							$mail_Data .= $mailprix;					
+							$mail_Data .="<p> Email envoyé automatiquement depuis le site convoyage-incygne.com </p>";				
 							$mail_Data .= "<br> \n";
 							$mail_Data .= "</body> \n";
 							$mail_Data .= "</HTML> \n";
